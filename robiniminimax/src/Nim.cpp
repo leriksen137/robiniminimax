@@ -20,32 +20,32 @@ Nim::Nim(Piles piles) : pile_limits_(std::move(piles))
 	print_game_states();
 }
 
-Piles Nim::toDigits(std::size_t n) const
+Piles Nim::toDigits(NimberType nimber) const
 {
 	Piles out{};
 
 	for (const auto pile : std::views::reverse(pile_limits_))
 	{
 		const auto base{pile + 1};
-		out.push_front(static_cast<std::uint8_t>(n % base));
-		n /= base;
+		out.push_front(static_cast<std::uint8_t>(nimber % base));
+		nimber /= base;
 	}
 	return out;
 }
 
-std::size_t Nim::toIndex(const Piles& piles) const
+NimberType Nim::toNimber(const Piles& piles) const
 {
 	if (piles.size() != pile_limits_.size())
 	{
 		throw std::invalid_argument("Digit count does not match piles count.");
 	}
 
-	std::size_t n{};
-	std::size_t multiplier{1};
+	NimberType n{};
+	NimberType multiplier{1};
 
-	for (const auto i : std::views::iota(std::size_t{0}, piles.size()))
+	for (const auto i : std::views::iota(NimberType{0}, piles.size()))
 	{
-		const auto idx = piles.size() - 1 - i;
+		const auto idx{piles.size() - 1 - i};
 		n += piles[idx] * multiplier;
 		multiplier *= (1 + pile_limits_[idx]);
 	}
@@ -53,9 +53,9 @@ std::size_t Nim::toIndex(const Piles& piles) const
 	return n;
 }
 
-std::vector<NimberType> Nim::calculate_reachable_positions(const GameStateInformation& gsi) const
+Moves Nim::calculate_reachable_positions(const GameStateInformation& gsi) const
 {
-	std::vector<NimberType> reachable_positions{};
+	Moves reachable_positions{};
 	for (std::uint8_t pile_index{}; pile_index < static_cast<std::uint8_t>(pile_limits_.size()); ++pile_index)
 	{
 		for (std::uint8_t num_remove{1}; num_remove <= gsi.piles_[pile_index]; ++num_remove)
@@ -63,7 +63,7 @@ std::vector<NimberType> Nim::calculate_reachable_positions(const GameStateInform
 			Piles state_after_move{gsi.piles_};
 			state_after_move[pile_index] -= num_remove;
 			std::ranges::sort(state_after_move);
-			reachable_positions.push_back(toIndex(state_after_move));
+			reachable_positions.push_back(toNimber(state_after_move));
 		}
 	}
 	return reachable_positions;
@@ -74,7 +74,7 @@ Position Nim::calculate_position_type(const GameStateInformation& gsi) const
 	std::vector reachable_position_nimbers{calculate_reachable_positions(gsi)};
 	return std::ranges::any_of(
 		       reachable_position_nimbers,
-		       [&](NimberType n)
+		       [&](const NimberType n)
 		       {
 			       return game_states_info_.at(n).position_ == Position::P;
 		       }
@@ -87,7 +87,7 @@ void Nim::calculate_unique_game_states()
 {
 	{
 		std::set<Piles> unique_positions{};
-		for (NimberType nimber{}; nimber <= toIndex(pile_limits_); ++nimber)
+		for (NimberType nimber{}; nimber <= toNimber(pile_limits_); ++nimber)
 		{
 			Piles p{toDigits(nimber)};
 			std::ranges::sort(p);
@@ -95,7 +95,7 @@ void Nim::calculate_unique_game_states()
 			if (!unique_positions.contains(p))
 			{
 				unique_positions.insert(p);
-				game_states_info_.insert({nimber, {.piles_ = p, .moves_ = {}, .position_ = Position::Unknown}});
+				game_states_info_.insert({nimber, {.piles_ = p, .position_ = Position::Unknown}});
 			}
 		}
 	}
@@ -123,7 +123,7 @@ void Nim::print_game_states() const
 	}
 	std::println("\n");
 
-	if (game_states_info_.at(toIndex(pile_limits_)).position_ == Position::N)
+	if (game_states_info_.at(toNimber(pile_limits_)).position_ == Position::N)
 	{
 		std::println("The starting player will win. Follow the cheat sheet below.");
 		std::println("Put the game into a state on the list to win");

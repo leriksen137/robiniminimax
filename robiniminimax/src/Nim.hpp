@@ -19,7 +19,6 @@ enum class Position : std::uint8_t
 struct GameStateInformation
 {
 	Piles piles_;
-	Moves moves_;
 	Position position_;
 };
 
@@ -29,9 +28,9 @@ class Nim
 {
 public:
 	explicit Nim(Piles piles);
-	[[nodiscard]] Piles toDigits(std::size_t n) const;
-	[[nodiscard]] std::size_t toIndex(const Piles& piles) const;
-	[[nodiscard]] std::vector<NimberType> calculate_reachable_positions(const GameStateInformation& gsi) const;
+	[[nodiscard]] Piles toDigits(NimberType nimber) const;
+	[[nodiscard]] NimberType toNimber(const Piles& piles) const;
+	[[nodiscard]] Moves calculate_reachable_positions(const GameStateInformation& gsi) const;
 	[[nodiscard]] Position calculate_position_type(const GameStateInformation& gsi) const;
 	void calculate_unique_game_states();
 	void print_game_states() const;

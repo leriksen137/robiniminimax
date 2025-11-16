@@ -13,7 +13,7 @@ int main(int argc, char** argv)
 		return 1;
 	}
 
-	Piles piles;
+	Piles piles{};
 	for (int i = 1; i < argc; ++i)
 	{
 		const auto r{std::stoul(argv[i])};
