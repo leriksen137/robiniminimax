@@ -162,12 +162,14 @@ void Nim::print_game_states() const
 					}
 				}
 			}
-			std::print(",\tTargets= ");
-			for (const auto& target : targets_after_two_moves)
+			if (!targets_after_two_moves.empty())
 			{
-				std::print("{} ", target);
+				std::print(",\tTargets= ");
+				for (const auto& target : targets_after_two_moves)
+				{
+					std::print("{} ", target);
+				}
 			}
-
 			std::print("\n");
 		}
 	}
