@@ -19,14 +19,11 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\GameState.cpp" />
-    <ClCompile Include="src\GameTree.cpp" />
+    <ClCompile Include="src\Nim.cpp" />
     <ClCompile Include="src\main.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\Consts.h" />
-    <ClInclude Include="src\GameState.h" />
-    <ClInclude Include="src\GameTree.h" />
+    <ClInclude Include="src\Nim.hpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>
